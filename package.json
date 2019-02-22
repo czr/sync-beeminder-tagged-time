@@ -1,0 +1,27 @@
+{
+  "name": "sync-beeminder-tagged-time",
+  "version": "1.0.0",
+  "description": "Updates a Beeminder goal with hashtagged calendar entries",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/czr/sync-beeminder-tagged-time.git"
+  },
+  "author": "Colin Z. Robertson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/czr/sync-beeminder-tagged-time/issues"
+  },
+  "homepage": "https://github.com/czr/sync-beeminder-tagged-time#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "minimist": "^1.2.0",
+    "moment": "^2.24.0",
+    "qs": "^6.6.0"
+  },
+  "devDependencies": {
+    "jest": "^24.1.0"
+  }
+}
