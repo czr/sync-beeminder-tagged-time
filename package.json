@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Updates a Beeminder goal with hashtagged calendar entries",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "deploy": "claudia --profile claudia create --region eu-west-1 --handler sync-btt-lambda.handler --name sync-beeminder-time-tracking-music --role sync-beeminder-time-tracking-music-role --runtime nodejs8.10 --timeout 60 --set-env-from-json env-music.json",
+    "redeploy": "claudia --profile claudia update --config claudia-music.json"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
     "qs": "^6.6.0"
   },
   "devDependencies": {
+    "claudia": "^5.4.0",
     "jest": "^24.1.0"
   }
 }
