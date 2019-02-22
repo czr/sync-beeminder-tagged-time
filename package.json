@@ -17,6 +17,7 @@
   "homepage": "https://github.com/czr/sync-beeminder-tagged-time#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "ical-tagged-time": "git+https://github.com/czr/ical-tagged-time.git",
     "minimist": "^1.2.0",
     "moment": "^2.24.0",
     "qs": "^6.6.0"
