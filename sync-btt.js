@@ -2,11 +2,11 @@
 
 'use strict'
 
+const beeminder = require('beeminder-js')
+const tt = require('ical-tagged-time')
 const minimist = require('minimist')
 const moment = require('moment')
-const tt = require('ical-tagged-time')
 
-const beeminder = require('./beeminder')
 const bttSync = require('./sync-beeminder-tagged-time')
 
 var music = beeminder.goal(

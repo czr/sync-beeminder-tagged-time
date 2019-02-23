@@ -1,9 +1,9 @@
 'use strict'
 
-const moment = require('moment')
+const beeminder = require('beeminder-js')
 const tt = require('ical-tagged-time')
+const moment = require('moment')
 
-const beeminder = require('./beeminder')
 const bttSync = require('./sync-beeminder-tagged-time')
 
 var beeminder_username = process.env.BEEMINDER_USERNAME
