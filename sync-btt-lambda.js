@@ -21,18 +21,21 @@ async function handler(event) {
 
   var tag = beeminder_goal
 
-  var iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
+  var iCalStrPromise = tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
+  var datapointsPromise = goal.datapoints()
+
+  var iCalStr = await iCalStrPromise
+  var datapoints = await datapointsPromise
 
   var events = bttSync.sortEvents(tt.taggedEvents(since, iCalStr)[tag] || [])
   
-  var datapoints = await goal.datapoints()
-  datapoints = bttSync.sortAndFilterDatapoints(datapoints, since)
+  var filteredDatapoints = bttSync.sortAndFilterDatapoints(datapoints, since)
 
-  var actions = bttSync.calcSyncActions(events, datapoints)
+  var actions = bttSync.calcSyncActions(events, filteredDatapoints)
 
   console.log(actions)
 
-  bttSync.applyActions(actions, goal)
+  await bttSync.applyActions(actions, goal)
 }
 
 module.exports = { handler };

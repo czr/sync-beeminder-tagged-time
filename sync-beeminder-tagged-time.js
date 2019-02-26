@@ -97,17 +97,45 @@ function calcSyncActions(events, datapoints) {
 }
 
 function applyActions(actions, goal) {
+  var promises = []
+
   for (let insertDatapoint of actions.insert) {
-    goal.createDatapoint(insertDatapoint)
+    promises.push(
+      goal.createDatapoint(insertDatapoint)
+        .then((result) => {
+          console.log('Created datapoint: ' + result)
+        })
+        .catch((error) => {
+          console.log('Failed to create datapoint: ' + error)
+        })
+    )
   }
 
   for (let updateDatapoint of actions.update) {
-    goal.updateDatapoint(updateDatapoint)
+    promises.push(
+      goal.updateDatapoint(updateDatapoint)
+        .then((result) => {
+          console.log('Updated datapoint: ' + updateDatapoint)
+        })
+        .catch((error) => {
+          console.log('Failed to update datapoint: ' + error)
+        })
+    )
   }
 
   for (let deleteDatapoint of actions.delete) {
-    goal.deleteDatapoint(deleteDatapoint)
+    promises.push(
+      goal.deleteDatapoint(deleteDatapoint)
+        .then((result) => {
+          console.log('Deleted datapoint: ' + deleteDatapoint)
+        })
+        .catch((error) => {
+          console.log('Failed to delete datapoint: ' + error)
+        })
+    )
   }
+
+  return Promise.all(promises)
 }
 
 module.exports = { calcSyncActions, sortEvents, sortAndFilterDatapoints, applyActions };
