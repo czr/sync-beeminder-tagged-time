@@ -149,11 +149,12 @@ describe('calcSyncActions', () => {
 })
 
 function mockGoal() {
+  let okPromise = new Promise((ok, err) => { ok() })
   return {
     datapoints: jest.fn(),
-    createDatapoint: jest.fn(),
-    deleteDatapoint: jest.fn(),
-    updateDatapoint: jest.fn(),
+    createDatapoint: jest.fn().mockReturnValue(okPromise),
+    deleteDatapoint: jest.fn().mockReturnValue(okPromise),
+    updateDatapoint: jest.fn().mockReturnValue(okPromise),
   }
 }
 
