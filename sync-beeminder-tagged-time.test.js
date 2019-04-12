@@ -38,8 +38,44 @@ var events = [
   },
 ]
 
+function mockGoal() {
+  let okPromise = new Promise((ok, err) => { ok() })
+  return {
+    datapoints: jest.fn(),
+    createDatapoint: jest.fn().mockReturnValue(okPromise),
+    deleteDatapoint: jest.fn().mockReturnValue(okPromise),
+    updateDatapoint: jest.fn().mockReturnValue(okPromise),
+  }
+}
+
 test('sorted events', () => {
   var sorted = sync.sortEvents(events)
+
+  expect(sorted).toMatchObject([
+    {
+      startDate: new Date('2019-02-21T01:00:00'),
+      endDate: new Date('2019-02-21T02:00:00'),
+      summary: 'One #music',
+    },
+    {
+      startDate: new Date('2019-02-22T01:00:00'),
+      endDate: new Date('2019-02-22T02:00:00'),
+      summary: 'Two #music',
+    },
+    {
+      startDate: new Date('2019-02-24T01:00:00'),
+      endDate: new Date('2019-02-24T02:00:00'),
+      summary: 'Three #music',
+    },
+  ])
+})
+
+test('sorted events', () => {
+  const syncer = new sync.BeeminderTimeSync(
+    mockGoal(),
+    events,
+  )
+  var sorted = syncer.sortedEvents()
 
   expect(sorted).toMatchObject([
     {
@@ -147,16 +183,6 @@ describe('calcSyncActions', () => {
     })
   })
 })
-
-function mockGoal() {
-  let okPromise = new Promise((ok, err) => { ok() })
-  return {
-    datapoints: jest.fn(),
-    createDatapoint: jest.fn().mockReturnValue(okPromise),
-    deleteDatapoint: jest.fn().mockReturnValue(okPromise),
-    updateDatapoint: jest.fn().mockReturnValue(okPromise),
-  }
-}
 
 describe('applyActions', () => {
   test('no actions', () => {

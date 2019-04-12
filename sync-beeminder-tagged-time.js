@@ -138,4 +138,15 @@ function applyActions(actions, goal) {
   return Promise.all(promises)
 }
 
-module.exports = { calcSyncActions, sortEvents, sortAndFilterDatapoints, applyActions };
+class BeeminderTimeSync {
+  constructor(goal, events) {
+    this.goal = goal
+    this.events = events
+  }
+
+  sortedEvents() {
+    return sortEvents(this.events)
+  }
+}
+
+module.exports = { calcSyncActions, sortEvents, sortAndFilterDatapoints, applyActions, BeeminderTimeSync };
