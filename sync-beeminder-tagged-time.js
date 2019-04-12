@@ -147,6 +147,11 @@ class BeeminderTimeSync {
   sortedEvents() {
     return sortEvents(this.events)
   }
+
+  async actions() {
+    var datapoints = await this.goal.datapoints()
+    return calcSyncActions(this.sortedEvents(), datapoints)
+  }
 }
 
 module.exports = { calcSyncActions, sortEvents, sortAndFilterDatapoints, applyActions, BeeminderTimeSync };

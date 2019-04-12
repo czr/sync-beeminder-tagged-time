@@ -38,10 +38,11 @@ var events = [
   },
 ]
 
-function mockGoal() {
-  let okPromise = new Promise((ok, err) => { ok() })
+function mockGoal(datapoints) {
+  let okPromise = new Promise((ok, err) => { ok({}) })
+  let datapointsPromise = new Promise((ok, err) => { ok(datapoints) })
   return {
-    datapoints: jest.fn(),
+    datapoints: jest.fn().mockReturnValue(datapointsPromise),
     createDatapoint: jest.fn().mockReturnValue(okPromise),
     deleteDatapoint: jest.fn().mockReturnValue(okPromise),
     updateDatapoint: jest.fn().mockReturnValue(okPromise),
@@ -169,6 +170,111 @@ describe('calcSyncActions', () => {
     ]
 
     var actions = sync.calcSyncActions(events, datapoints)
+
+    expect(actions).toEqual({
+      insert: [],
+      delete: [],
+      update: [
+        {
+          id: 101,
+          comment: '2019-02-21T01:00:00.000Z',
+          value: 60,
+        }
+      ],
+    })
+  })
+})
+
+describe('calculate sync actions', () => {
+  test('no data', async () => {
+    var events = []
+
+    const syncer = new sync.BeeminderTimeSync(
+      mockGoal([]),
+      events,
+    )
+
+    var actions = await syncer.actions()
+
+    expect(actions).toEqual({insert: [], delete: [], update: []})
+  })
+
+  test('one event', async () => {
+    var events = [
+      {
+        startDate: new Date('2019-02-21T01:00:00'),
+        endDate: new Date('2019-02-21T02:00:00'),
+        summary: 'One #music',
+      }
+    ]
+    const syncer = new sync.BeeminderTimeSync(
+      mockGoal([]),
+      events,
+    )
+
+    var actions = await syncer.actions()
+
+    expect(actions).toEqual({
+      insert: [
+        {
+          comment: '2019-02-21T01:00:00.000Z',
+          value: 60,
+          daystamp: '20190221',
+        },
+      ],
+      delete: [],
+      update: [],
+    })
+  })
+
+  test('one datapoint', async () => {
+    var events = []
+    var datapoints = [
+      {
+        id: 101,
+        comment: '2019-02-21T01:00:00.000Z',
+        value: 60,
+      },
+    ]
+
+    const syncer = new sync.BeeminderTimeSync(
+      mockGoal(datapoints),
+      events,
+    )
+
+    var actions = await syncer.actions()
+
+    expect(actions).toEqual({
+      insert: [],
+      delete: [
+        101,
+      ],
+      update: [],
+    })
+  })
+
+  test('update', async () => {
+    var events = [
+      {
+        startDate: new Date('2019-02-21T01:00:00'),
+        endDate: new Date('2019-02-21T02:00:00'),
+        summary: 'One #music',
+      }
+    ]
+    var datapoints = [
+      {
+        id: 101,
+        comment: '2019-02-21T01:00:00.000Z',
+        value: 30,
+      },
+    ]
+
+    const syncer = new sync.BeeminderTimeSync(
+      mockGoal(datapoints),
+      events,
+    )
+
+    var actions = await syncer.actions()
 
     expect(actions).toEqual({
       insert: [],
