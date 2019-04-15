@@ -38,9 +38,13 @@ var events = [
   },
 ]
 
+function createOkPromise(data) {
+  return new Promise((ok, err) => { ok(data) })
+}
+
 function mockGoal(datapoints) {
-  let okPromise = new Promise((ok, err) => { ok({}) })
-  let datapointsPromise = new Promise((ok, err) => { ok(datapoints) })
+  let okPromise = createOkPromise({})
+  let datapointsPromise = createOkPromise(datapoints)
   return {
     datapoints: jest.fn().mockReturnValue(datapointsPromise),
     createDatapoint: jest.fn().mockReturnValue(okPromise),
@@ -394,4 +398,116 @@ describe('applyActions', () => {
     expect(goal.deleteDatapoint).toHaveBeenCalledWith(101)
   })
 
+})
+
+describe('applyActions', () => {
+  test('no actions', async () => {
+    var goal = mockGoal()
+    var actions = {insert: [], update: [], delete: []}
+
+    const syncer = new sync.BeeminderTimeSync(
+      goal,
+      [],
+      moment('2019-01-01'),
+    )
+    syncer.actions = () => createOkPromise(actions)
+
+    await syncer.apply()
+
+    expect(goal.datapoints).not.toHaveBeenCalled()
+    expect(goal.createDatapoint).not.toHaveBeenCalled()
+    expect(goal.deleteDatapoint).not.toHaveBeenCalled()
+    expect(goal.updateDatapoint).not.toHaveBeenCalled()
+  })
+
+  test('insert', async () => {
+    var goal = mockGoal()
+    var actions = {
+      insert: [
+        {
+          comment: '2019-02-21T01:00:00.000Z',
+          value: 60,
+        },
+      ],
+      update: [],
+      delete: [],
+    }
+
+    const syncer = new sync.BeeminderTimeSync(
+      goal,
+      [],
+      moment('2019-01-01'),
+    )
+    syncer.actions = () => createOkPromise(actions)
+
+    await syncer.apply()
+
+    expect(goal.datapoints).not.toHaveBeenCalled()
+    expect(goal.createDatapoint).toHaveBeenCalledWith(
+      {
+        comment: '2019-02-21T01:00:00.000Z',
+        value: 60,
+      }
+    )
+    expect(goal.deleteDatapoint).not.toHaveBeenCalled()
+    expect(goal.updateDatapoint).not.toHaveBeenCalled()
+  })
+
+  test('update', async () => {
+    var goal = mockGoal()
+    var actions = {
+      insert: [],
+      update: [
+        {
+          id: 101,
+          comment: '2019-02-21T01:00:00.000Z',
+          value: 60,
+        },
+      ],
+      delete: [],
+    }
+
+    const syncer = new sync.BeeminderTimeSync(
+      goal,
+      [],
+      moment('2019-01-01'),
+    )
+    syncer.actions = () => createOkPromise(actions)
+
+    await syncer.apply()
+
+    expect(goal.datapoints).not.toHaveBeenCalled()
+    expect(goal.createDatapoint).not.toHaveBeenCalled()
+    expect(goal.updateDatapoint).toHaveBeenCalledWith(
+      {
+        id: 101,
+        comment: '2019-02-21T01:00:00.000Z',
+        value: 60,
+      }
+    )
+    expect(goal.deleteDatapoint).not.toHaveBeenCalled()
+  })
+
+  test('insert', async () => {
+    var goal = mockGoal()
+    var actions = {
+      insert: [],
+      update: [],
+      delete: [101],
+    }
+
+    const syncer = new sync.BeeminderTimeSync(
+      goal,
+      [],
+      moment('2019-01-01'),
+    )
+    syncer.actions = () => createOkPromise(actions)
+
+    await syncer.apply()
+
+    expect(goal.datapoints).not.toHaveBeenCalled()
+    expect(goal.createDatapoint).not.toHaveBeenCalled()
+    expect(goal.updateDatapoint).not.toHaveBeenCalled()
+    expect(goal.deleteDatapoint).toHaveBeenCalledWith(101)
+  })
 })
