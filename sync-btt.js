@@ -2,42 +2,51 @@
 
 'use strict'
 
+require("dotenv-json")()
+
 const beeminder = require('beeminder-js')
 const tt = require('ical-tagged-time')
 const minimist = require('minimist')
 const moment = require('moment')
 
-const bttSync = require('./sync-beeminder-tagged-time')
+const sync = require('./sync-beeminder-tagged-time')
 
-var music = beeminder.goal(
-  process.env.BEEMINDER_USERNAME,
-  process.env.BEEMINDER_AUTH_TOKEN,
-  process.env.BEEMINDER_GOAL,
+var beeminder_username = process.env.BEEMINDER_USERNAME
+var beeminder_auth_token = process.env.BEEMINDER_AUTH_TOKEN
+var beeminder_goal = process.env.BEEMINDER_GOAL
+
+var goal = beeminder.goal(
+  beeminder_username,
+  beeminder_auth_token,
+  beeminder_goal,
 )
 
 var opts = minimist(process.argv.slice(2))
-
 var apply = opts.apply
-var lastWeek = moment().subtract(7, 'days').startOf('day')
 
-async function sync(goal, tag, since, apply) {
+async function synchronise(apply) {
+  var since = moment().subtract(7, 'days').startOf('day')
+
+  var tag = beeminder_goal
+
   var iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
+  var events = tt.taggedEvents(since, iCalStr)[tag] || []
 
-  var events = bttSync.sortEvents(tt.taggedEvents(since, iCalStr)[tag] || [])
-  
-  var datapoints = await goal.datapoints()
-  datapoints = bttSync.sortAndFilterDatapoints(datapoints, lastWeek)
-
-  var actions = bttSync.calcSyncActions(events, datapoints)
-
-  console.log(actions)
-
+  const syncer = new sync.BeeminderTimeSync(
+    goal,
+    events,
+    since,
+  )
   if (apply) {
-    bttSync.applyActions(actions, goal)
+    await syncer.apply()
+  }
+  else {
+    const actions = await syncer.actions()
+    console.log(actions)
   }
 }
 
-sync(music, process.env.BEEMINDER_GOAL, lastWeek, apply)
+synchronise(apply)
 .catch(error => {
   console.log('Failed to synchronise Beeminder with calendar')
   console.log(error)
