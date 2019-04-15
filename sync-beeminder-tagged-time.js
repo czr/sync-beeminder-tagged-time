@@ -18,7 +18,7 @@ class BeeminderTimeSync {
   }
 
   sortedEvents() {
-    var sorted = this.events
+    var sorted = Array.from(this.events)
     sorted.sort((a, b) => {
       if (a.startDate < b.startDate) {
         return -1
@@ -42,7 +42,7 @@ class BeeminderTimeSync {
       return m.isSameOrAfter(since)
     })
 
-    var sorted = filtered
+    var sorted = Array.from(filtered)
     sorted.sort((a, b) => {
       if (a.comment < b.comment) {
         return -1
@@ -57,9 +57,8 @@ class BeeminderTimeSync {
   }
 
   async actions() {
-    var events = this.sortedEvents().slice(0)
-    var datapoints = await this.datapoints()
-    var datapoints = datapoints.slice(0)
+    var events = Array.from(this.sortedEvents())
+    var datapoints = Array.from(await this.datapoints())
 
     var actions = {insert: [], delete: [], update: []}
 
