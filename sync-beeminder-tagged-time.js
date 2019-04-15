@@ -139,17 +139,23 @@ function applyActions(actions, goal) {
 }
 
 class BeeminderTimeSync {
-  constructor(goal, events) {
+  constructor(goal, events, startDate) {
     this.goal = goal
     this.events = events
+    this.startDate = startDate
   }
 
   sortedEvents() {
     return sortEvents(this.events)
   }
 
-  async actions() {
+  async datapoints() {
     var datapoints = await this.goal.datapoints()
+    return sortAndFilterDatapoints(datapoints, this.startDate)
+  }
+
+  async actions() {
+    var datapoints = await this.datapoints()
     return calcSyncActions(this.sortedEvents(), datapoints)
   }
 }

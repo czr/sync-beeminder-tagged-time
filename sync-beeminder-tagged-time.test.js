@@ -49,6 +49,22 @@ function mockGoal(datapoints) {
   }
 }
 
+test('sorted, filtered datapoints', async () => {
+  const syncer = new sync.BeeminderTimeSync(
+    mockGoal(datapoints),
+    events,
+    moment('2019-02-21'),
+  )
+
+  const result = await syncer.datapoints()
+
+  expect(result).toMatchObject([
+    {"id":"2", "timestamp":1234567890, "daystamp":"20190221", "value":7, "comment":"2019-02-21T01:00:00.000Z", "updated_at":123, "requestid":"b"},
+    {"id":"3", "timestamp":1234567891, "daystamp":"20190222", "value":8, "comment":"2019-02-22T01:00:00.000Z", "updated_at":123, "requestid":"c"},
+    {"id":"1", "timestamp":1234567890, "daystamp":"20190223", "value":6, "comment":"2019-02-23T01:00:00.000Z", "updated_at":123, "requestid":"a"},
+  ])
+})
+
 test('sorted events', () => {
   var sorted = sync.sortEvents(events)
 
@@ -75,6 +91,7 @@ test('sorted events', () => {
   const syncer = new sync.BeeminderTimeSync(
     mockGoal(),
     events,
+    moment('2019-01-01'),
   )
   var sorted = syncer.sortedEvents()
 
@@ -192,6 +209,7 @@ describe('calculate sync actions', () => {
     const syncer = new sync.BeeminderTimeSync(
       mockGoal([]),
       events,
+      moment('2019-01-01'),
     )
 
     var actions = await syncer.actions()
@@ -210,6 +228,7 @@ describe('calculate sync actions', () => {
     const syncer = new sync.BeeminderTimeSync(
       mockGoal([]),
       events,
+      moment('2019-01-01'),
     )
 
     var actions = await syncer.actions()
@@ -240,6 +259,7 @@ describe('calculate sync actions', () => {
     const syncer = new sync.BeeminderTimeSync(
       mockGoal(datapoints),
       events,
+      moment('2019-01-01'),
     )
 
     var actions = await syncer.actions()
@@ -272,6 +292,7 @@ describe('calculate sync actions', () => {
     const syncer = new sync.BeeminderTimeSync(
       mockGoal(datapoints),
       events,
+      moment('2019-01-01'),
     )
 
     var actions = await syncer.actions()
