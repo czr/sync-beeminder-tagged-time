@@ -9,14 +9,24 @@ function eventDuration(event) {
   return moment.duration(endTime.diff(startTime)).asMinutes()
 }
 
-
+/** Synchroniser for Beeminder time-based goal and a set of events */
 class BeeminderTimeSync {
+  /**
+   * Create a BeeminderTimeSync instance.
+   * @param {goal} goal - Goal to synchronise.
+   * @param {Array} events - Array of events.
+   * @param {Moment} startDate - MomentJS date from which to synchronise.
+   */
   constructor(goal, events, startDate) {
     this.goal = goal
     this.events = events
     this.startDate = startDate
   }
 
+  /**
+   * Returns the events sorted by their startDate.
+   * @return {Array} Events.
+   */
   sortedEvents() {
     var sorted = Array.from(this.events)
     sorted.sort((a, b) => {
@@ -31,6 +41,11 @@ class BeeminderTimeSync {
     return sorted
   }
 
+  /**
+   * Returns datapoints previously created by BeeminderTimeSync since startDate
+   * sorted by corresponding event date.
+   * @return {Promise} Array of datapoints.
+   */
   async datapoints() {
     var allDatapoints = await this.goal.datapoints()
     var since = this.startDate
@@ -56,6 +71,10 @@ class BeeminderTimeSync {
     return sorted
   }
 
+  /**
+   * Calculates actions needed to bring goal datapoints into line with events.
+   * @return {Promise} Actions as {insert: [...], delete: [...], update: [...]}.
+   */
   async actions() {
     var events = Array.from(this.sortedEvents())
     var datapoints = Array.from(await this.datapoints())
@@ -109,6 +128,10 @@ class BeeminderTimeSync {
     return actions
   }
 
+  /**
+   * Brings goal datapoints into line with events.
+   * @return {Promise} Container promise for all Beeminder API calls.
+   */
   async apply() {
     var actions = await this.actions()
     var goal = this.goal

@@ -1,0 +1,13 @@
+{
+    "opts": {
+        "destination": "./jsdoc-out/",
+        "recurse": true
+    },
+    "source": {
+        "include" : ["."],
+        "excludePattern": "node_modules"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ]
+}
