@@ -2,6 +2,16 @@
 
 const moment = require('moment')
 
+function cmp(a, b) {
+  if (a < b) {
+    return -1
+  }
+  if (a > b) {
+    return 1
+  }
+  return 0
+}
+
 function eventDuration(event) {
   var startTime = moment(event.startDate)
   var endTime = moment(event.endDate)
@@ -29,15 +39,7 @@ class BeeminderTimeSync {
    */
   sortedEvents() {
     var sorted = Array.from(this.events)
-    sorted.sort((a, b) => {
-      if (a.startDate < b.startDate) {
-        return -1
-      }
-      if (a.startDate > b.startDate) {
-        return 1
-      }
-      return 0
-    })
+    sorted.sort((a, b) => cmp(a.startDate, b.startDate))
     return sorted
   }
 
@@ -58,15 +60,7 @@ class BeeminderTimeSync {
     })
 
     var sorted = Array.from(filtered)
-    sorted.sort((a, b) => {
-      if (a.comment < b.comment) {
-        return -1
-      }
-      if (a.comment > b.comment) {
-        return 1
-      }
-      return 0
-    })
+    sorted.sort((a, b) => cmp(a.comment, b.comment))
 
     return sorted
   }
