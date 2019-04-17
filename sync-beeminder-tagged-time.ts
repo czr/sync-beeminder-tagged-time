@@ -46,7 +46,7 @@ class BeeminderTimeSync {
   startDate: moment.Moment
   /**
    * Create a BeeminderTimeSync instance.
-   * @param {goal} goal - Goal to synchronise.
+   * @param {BeeminderGoal} goal - Goal to synchronise.
    * @param {Array<Event>} events - Array of events.
    * @param {moment.Moment} startDate - MomentJS date from which to synchronise.
    */
@@ -69,7 +69,7 @@ class BeeminderTimeSync {
   /**
    * Returns datapoints previously created by BeeminderTimeSync since startDate
    * sorted by corresponding event date.
-   * @return {Promise} Array of datapoints.
+   * @return {Promise<Array<BeeminderDatapoint>>} Array of datapoints.
    */
   async datapoints(): Promise<Array<BeeminderDatapoint>> {
     var allDatapoints: Array<BeeminderDatapoint> = await this.goal.datapoints()
@@ -147,7 +147,7 @@ class BeeminderTimeSync {
 
   /**
    * Brings goal datapoints into line with events.
-   * @return {Promise} Container promise for all Beeminder API calls.
+   * @return {Promise<void>} Container promise for all Beeminder API calls.
    */
   async apply() {
     var actions = await this.actions()
