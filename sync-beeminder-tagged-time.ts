@@ -8,18 +8,29 @@ interface Event {
   summary: string
 }
 
-interface BeeminderDatapoint {
+interface BeeminderDatapointExisting {
   id: string
   value: number
-  comment: string
+  timestamp: number
   daystamp: string
+  comment: string
+  updated_at: number
+  requestid: string
+}
+
+interface BeeminderDatapointNew {
+  value: number
+  timestamp: number
+  daystamp: string
+  comment: string
+  requestid: string
 }
 
 interface BeeminderGoal {
-  datapoints(): Promise<Array<BeeminderDatapoint>>
-  createDatapoint(datapoint: BeeminderDatapoint): Promise<BeeminderDatapoint>
-  deleteDatapoint(id: string): Promise<void>
-  updateDatapoint(datapoint: BeeminderDatapoint): Promise<BeeminderDatapoint>
+  datapoints(): Promise<Array<BeeminderDatapointExisting>>
+  createDatapoint(datapoint: BeeminderDatapointNew): Promise<string>
+  deleteDatapoint(id: string): Promise<any>
+  updateDatapoint(datapoint: BeeminderDatapointExisting): Promise<any>
 }
 
 function cmp(a: any, b: any): number {
@@ -71,8 +82,8 @@ class BeeminderTimeSync {
    * sorted by corresponding event date.
    * @return {Promise<Array<BeeminderDatapoint>>} Array of datapoints.
    */
-  async datapoints(): Promise<Array<BeeminderDatapoint>> {
-    var allDatapoints: Array<BeeminderDatapoint> = await this.goal.datapoints()
+  async datapoints(): Promise<Array<BeeminderDatapointExisting>> {
+    var allDatapoints: Array<BeeminderDatapointExisting> = await this.goal.datapoints()
     var since = this.startDate
 
     var filtered = allDatapoints.filter(datapoint => {
@@ -92,7 +103,7 @@ class BeeminderTimeSync {
    * Calculates actions needed to bring goal datapoints into line with events.
    * @return {Promise} Actions as {insert: [...], delete: [...], update: [...]}.
    */
-  async actions() {
+  async actions(): Promise<any> {
     var events = Array.from(this.sortedEvents())
     var datapoints = Array.from(await this.datapoints())
 
@@ -149,7 +160,7 @@ class BeeminderTimeSync {
    * Brings goal datapoints into line with events.
    * @return {Promise<void>} Container promise for all Beeminder API calls.
    */
-  async apply() {
+  async apply(): Promise<any> {
     var actions = await this.actions()
     var goal = this.goal
 
