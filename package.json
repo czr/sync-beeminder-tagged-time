@@ -4,7 +4,7 @@
   "description": "Updates a Beeminder goal with hashtagged calendar entries",
   "scripts": {
     "build": "tsc && chmod +x sync-btt.js",
-    "test": "jest",
+    "test": "npm run build && jest",
     "deploy": "npm run build && claudia --profile claudia create --region eu-west-1 --handler sync-btt-lambda.handler --name sync-beeminder-time-tracking-music --role sync-beeminder-time-tracking-music-role --runtime nodejs8.10 --timeout 60 --set-env-from-json .env.json",
     "redeploy": "npm run build && claudia --profile claudia update --config claudia-music.json",
     "docs": "jsdoc -c jsdoc.conf.json"
