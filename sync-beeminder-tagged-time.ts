@@ -8,6 +8,13 @@ interface Event {
   summary: string
 }
 
+interface BeeminderDatapoint {
+  id: string
+  value: number
+  comment: string
+  daystamp: string
+}
+
 function cmp(a: any, b: any): number {
   if (a < b) {
     return -1
@@ -57,8 +64,8 @@ class BeeminderTimeSync {
    * sorted by corresponding event date.
    * @return {Promise} Array of datapoints.
    */
-  async datapoints() {
-    var allDatapoints = await this.goal.datapoints()
+  async datapoints(): Promise<Array<BeeminderDatapoint>> {
+    var allDatapoints: Array<BeeminderDatapoint> = await this.goal.datapoints()
     var since = this.startDate
 
     var filtered = allDatapoints.filter(datapoint => {
@@ -69,7 +76,7 @@ class BeeminderTimeSync {
     })
 
     var sorted = Array.from(filtered)
-    sorted.sort((a: any, b: any) => cmp(a.comment, b.comment))
+    sorted.sort((a, b) => cmp(a.comment, b.comment))
 
     return sorted
   }
@@ -85,7 +92,7 @@ class BeeminderTimeSync {
     var actions = {insert: [], delete: [], update: []}
 
     var currEvent = events.shift()
-    var currDatapoint: any = datapoints.shift()
+    var currDatapoint = datapoints.shift()
 
     var counter = 0
     while (currEvent && currDatapoint) {
