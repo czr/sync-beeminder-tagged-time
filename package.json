@@ -27,6 +27,7 @@
     "qs": "^6.6.0"
   },
   "devDependencies": {
+    "@types/node": "^11.13.4",
     "claudia": "^5.4.0",
     "dotenv-json": "^1.0.0",
     "jest": "^24.1.0",

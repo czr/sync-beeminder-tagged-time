@@ -21,6 +21,9 @@ function eventDuration(event) {
 
 /** Synchroniser for Beeminder time-based goal and a set of events */
 class BeeminderTimeSync {
+  goal: any
+  events: any
+  startDate: any
   /**
    * Create a BeeminderTimeSync instance.
    * @param {goal} goal - Goal to synchronise.
@@ -39,7 +42,7 @@ class BeeminderTimeSync {
    */
   sortedEvents() {
     var sorted = Array.from(this.events)
-    sorted.sort((a, b) => cmp(a.startDate, b.startDate))
+    sorted.sort((a: any, b: any) => cmp(a.startDate, b.startDate))
     return sorted
   }
 
@@ -60,7 +63,7 @@ class BeeminderTimeSync {
     })
 
     var sorted = Array.from(filtered)
-    sorted.sort((a, b) => cmp(a.comment, b.comment))
+    sorted.sort((a: any, b: any) => cmp(a.comment, b.comment))
 
     return sorted
   }
@@ -75,8 +78,8 @@ class BeeminderTimeSync {
 
     var actions = {insert: [], delete: [], update: []}
 
-    var currEvent = events.shift()
-    var currDatapoint = datapoints.shift()
+    var currEvent: any = events.shift()
+    var currDatapoint: any = datapoints.shift()
 
     var counter = 0;
     while (currEvent && currDatapoint) {
