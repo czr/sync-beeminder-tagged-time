@@ -175,4 +175,4 @@ class BeeminderTimeSync {
   }
 }
 
-module.exports = { BeeminderTimeSync };
+export { BeeminderTimeSync }
