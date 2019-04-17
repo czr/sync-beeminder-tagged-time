@@ -2,7 +2,7 @@
 
 const moment = require('moment')
 
-function cmp(a, b) {
+function cmp(a: any, b: any): number {
   if (a < b) {
     return -1
   }
@@ -12,7 +12,7 @@ function cmp(a, b) {
   return 0
 }
 
-function eventDuration(event) {
+function eventDuration(event): number {
   var startTime = moment(event.startDate)
   var endTime = moment(event.endDate)
 
