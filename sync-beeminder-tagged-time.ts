@@ -1,6 +1,12 @@
 'use strict'
 
-const moment = require('moment')
+import moment from 'moment'
+
+interface Event {
+  startDate: Date
+  endDate: Date
+  summary: string
+}
 
 function cmp(a: any, b: any): number {
   if (a < b) {
@@ -12,7 +18,7 @@ function cmp(a: any, b: any): number {
   return 0
 }
 
-function eventDuration(event): number {
+function eventDuration(event: Event): number {
   var startTime = moment(event.startDate)
   var endTime = moment(event.endDate)
 
@@ -22,15 +28,15 @@ function eventDuration(event): number {
 /** Synchroniser for Beeminder time-based goal and a set of events */
 class BeeminderTimeSync {
   goal: any
-  events: any
-  startDate: any
+  events: Array<Event>
+  startDate: moment.Moment
   /**
    * Create a BeeminderTimeSync instance.
    * @param {goal} goal - Goal to synchronise.
-   * @param {Array} events - Array of events.
-   * @param {Moment} startDate - MomentJS date from which to synchronise.
+   * @param {Array<Event>} events - Array of events.
+   * @param {moment.Moment} startDate - MomentJS date from which to synchronise.
    */
-  constructor(goal, events, startDate) {
+  constructor(goal, events: Array<Event>, startDate: moment.Moment) {
     this.goal = goal
     this.events = events
     this.startDate = startDate
@@ -38,11 +44,11 @@ class BeeminderTimeSync {
 
   /**
    * Returns the events sorted by their startDate.
-   * @return {Array} Events.
+   * @return {Array<Event>} Events.
    */
-  sortedEvents() {
+  sortedEvents(): Array<Event> {
     var sorted = Array.from(this.events)
-    sorted.sort((a: any, b: any) => cmp(a.startDate, b.startDate))
+    sorted.sort((a, b) => cmp(a.startDate, b.startDate))
     return sorted
   }
 
@@ -78,10 +84,10 @@ class BeeminderTimeSync {
 
     var actions = {insert: [], delete: [], update: []}
 
-    var currEvent: any = events.shift()
+    var currEvent = events.shift()
     var currDatapoint: any = datapoints.shift()
 
-    var counter = 0;
+    var counter = 0
     while (currEvent && currDatapoint) {
       if (currEvent.startDate.toISOString() === currDatapoint.comment) {
         if (eventDuration(currEvent) !== currDatapoint.value) {
