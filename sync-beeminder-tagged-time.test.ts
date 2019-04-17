@@ -63,7 +63,7 @@ test('sorted events', () => {
   ]
 
   const syncer = new sync.BeeminderTimeSync(
-    mockGoal(),
+    mockGoal([]),
     events,
     moment('2019-01-01'),
   )
@@ -199,7 +199,7 @@ describe('calculate sync actions', () => {
 
 describe('apply', () => {
   test('no actions', async () => {
-    var goal = mockGoal()
+    var goal = mockGoal([])
     var actions = {insert: [], update: [], delete: []}
 
     const syncer = new sync.BeeminderTimeSync(
@@ -218,7 +218,7 @@ describe('apply', () => {
   })
 
   test('insert', async () => {
-    var goal = mockGoal()
+    var goal = mockGoal([])
     var actions = {
       insert: [
         {
@@ -251,7 +251,7 @@ describe('apply', () => {
   })
 
   test('update', async () => {
-    var goal = mockGoal()
+    var goal = mockGoal([])
     var actions = {
       insert: [],
       update: [
@@ -286,7 +286,7 @@ describe('apply', () => {
   })
 
   test('insert', async () => {
-    var goal = mockGoal()
+    var goal = mockGoal([])
     var actions = {
       insert: [],
       update: [],
