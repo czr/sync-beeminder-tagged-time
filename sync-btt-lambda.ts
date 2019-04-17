@@ -4,7 +4,7 @@ const beeminder = require('beeminder-js')
 const tt = require('ical-tagged-time')
 const moment = require('moment')
 
-const sync = require('./sync-beeminder-tagged-time')
+import * as sync from './sync-beeminder-tagged-time'
 
 var beeminder_username = process.env.BEEMINDER_USERNAME
 var beeminder_auth_token = process.env.BEEMINDER_AUTH_TOKEN
