@@ -15,6 +15,13 @@ interface BeeminderDatapoint {
   daystamp: string
 }
 
+interface BeeminderGoal {
+  datapoints(): Promise<Array<BeeminderDatapoint>>
+  createDatapoint(datapoint: BeeminderDatapoint): Promise<BeeminderDatapoint>
+  deleteDatapoint(id: string): Promise<void>
+  updateDatapoint(datapoint: BeeminderDatapoint): Promise<BeeminderDatapoint>
+}
+
 function cmp(a: any, b: any): number {
   if (a < b) {
     return -1
@@ -34,7 +41,7 @@ function eventDuration(event: Event): number {
 
 /** Synchroniser for Beeminder time-based goal and a set of events */
 class BeeminderTimeSync {
-  goal: any
+  goal: BeeminderGoal
   events: Array<Event>
   startDate: moment.Moment
   /**
@@ -43,7 +50,7 @@ class BeeminderTimeSync {
    * @param {Array<Event>} events - Array of events.
    * @param {moment.Moment} startDate - MomentJS date from which to synchronise.
    */
-  constructor(goal, events: Array<Event>, startDate: moment.Moment) {
+  constructor(goal: BeeminderGoal, events: Array<Event>, startDate: moment.Moment) {
     this.goal = goal
     this.events = events
     this.startDate = startDate
