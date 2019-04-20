@@ -33,6 +33,21 @@ interface BeeminderGoal {
   updateDatapoint(datapoint: BeeminderDatapointExisting): Promise<any>
 }
 
+class ActionCreate {
+  type: 'create'
+  datapoint: BeeminderDatapointNew
+}
+
+class ActionUpdate {
+  type: 'update'
+  datapoint: BeeminderDatapointExisting
+}
+
+class ActionDelete {
+  type: 'delete'
+  datapoint: BeeminderDatapointExisting
+}
+
 function cmp(a: any, b: any): number {
   if (a < b) {
     return -1
@@ -103,11 +118,11 @@ class BeeminderTimeSync {
    * Calculates actions needed to bring goal datapoints into line with events.
    * @return {Promise} Actions as {insert: [...], delete: [...], update: [...]}.
    */
-  async actions(): Promise<any> {
+  async actions(): Promise<Array<ActionCreate|ActionUpdate|ActionDelete>> {
     var events = Array.from(this.sortedEvents())
     var datapoints = Array.from(await this.datapoints())
 
-    var actions = {insert: [], delete: [], update: []}
+    var actions = []
 
     var currEvent = events.shift()
     var currDatapoint = datapoints.shift()
@@ -116,40 +131,40 @@ class BeeminderTimeSync {
     while (currEvent && currDatapoint) {
       if (currEvent.startDate.toISOString() === currDatapoint.comment) {
         if (eventDuration(currEvent) !== currDatapoint.value) {
-          actions.update.push({
+          actions.push({ type: 'update', datapoint: {
             id: currDatapoint.id,
             value: eventDuration(currEvent),
             comment: currDatapoint.comment,
-          })
+          }})
         }
         currEvent = events.shift()
         currDatapoint = datapoints.shift()
       }
       else if (currEvent.startDate.toISOString() > currDatapoint.comment) {
-        actions.delete.push(currDatapoint.id)
+        actions.push({ type: 'delete', datapoint: currDatapoint })
         currDatapoint = datapoints.shift()
       }
       else if (currEvent.startDate.toISOString() < currDatapoint.comment) {
-        actions.insert.push({
+        actions.push({ type: 'create', datapoint: {
           comment: currEvent.startDate.toISOString(),
           value: eventDuration(currEvent),
           daystamp: moment(currEvent.startDate).format('YYYYMMDD'),
-        })
+        }})
         currEvent = events.shift()
       }
     }
 
     while (currEvent) {
-      actions.insert.push({
+      actions.push({ type: 'create', datapoint: {
         comment: currEvent.startDate.toISOString(),
         value: eventDuration(currEvent),
         daystamp: moment(currEvent.startDate).format('YYYYMMDD'),
-      })
+      }})
       currEvent = events.shift()
     }
 
     while (currDatapoint) {
-      actions.delete.push(currDatapoint.id)
+      actions.push({ type: 'delete', datapoint: currDatapoint })
       currDatapoint = datapoints.shift()
     }
 
@@ -166,40 +181,42 @@ class BeeminderTimeSync {
 
     var promises = []
 
-    for (let insertDatapoint of actions.insert) {
-      promises.push(
-        goal.createDatapoint(insertDatapoint)
-          .then((result) => {
-            console.log('Created datapoint: ' + result)
-          })
-          .catch((error) => {
-            console.log('Failed to create datapoint: ' + error)
-          })
-      )
-    }
+    for (let action of actions) {
+      if (action.type === 'create') {
+        promises.push(
+          goal.createDatapoint(action.datapoint)
+            .then((result) => {
+              console.log('Created datapoint: ' + result)
+            })
+            .catch((error) => {
+              console.log('Failed to create datapoint: ' + error)
+            })
+        )
+      }
 
-    for (let updateDatapoint of actions.update) {
-      promises.push(
-        goal.updateDatapoint(updateDatapoint)
-          .then((result) => {
-            console.log('Updated datapoint: ' + updateDatapoint)
-          })
-          .catch((error) => {
-            console.log('Failed to update datapoint: ' + error)
-          })
-      )
-    }
+      if (action.type === 'update') {
+        promises.push(
+          goal.updateDatapoint(action.datapoint)
+            .then((result) => {
+              console.log('Updated datapoint: ' + action.datapoint)
+            })
+            .catch((error) => {
+              console.log('Failed to update datapoint: ' + error)
+            })
+        )
+      }
 
-    for (let deleteDatapoint of actions.delete) {
-      promises.push(
-        goal.deleteDatapoint(deleteDatapoint)
-          .then((result) => {
-            console.log('Deleted datapoint: ' + deleteDatapoint)
-          })
-          .catch((error) => {
-            console.log('Failed to delete datapoint: ' + error)
-          })
-      )
+      if (action.type === 'delete') {
+        promises.push(
+          goal.deleteDatapoint(action.datapoint.id)
+            .then((result) => {
+              console.log('Deleted datapoint: ' + action.datapoint)
+            })
+            .catch((error) => {
+              console.log('Failed to delete datapoint: ' + error)
+            })
+        )
+      }
     }
 
     return Promise.all(promises)
