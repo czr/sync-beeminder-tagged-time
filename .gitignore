@@ -62,3 +62,7 @@ typings/
 
 # JSDoc generated documentation
 jsdoc-out
+
+# Deployment
+.env.json
+claudia.json
