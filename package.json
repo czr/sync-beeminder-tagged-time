@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc && chmod +x sync-btt.js",
     "test": "npm run build && jest",
+    "posttest": "tslint --project tsconfig.json",
     "redeploy": "npm run build && claudia --profile claudia update",
     "docs": "jsdoc -c jsdoc.conf.json"
   },
@@ -33,6 +34,8 @@
     "dotenv-json": "^1.0.0",
     "jest": "^24.1.0",
     "jsdoc": "^3.5.5",
+    "tslint": "^5.16.0",
+    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.4.3"
   }
 }
