@@ -42,6 +42,15 @@ The `role` and `name` can be named however you like. You'll also want to adjust 
 npm run redeploy
 ```
 
+## Running locally
+
+Set up `.env.json` as described above and run:
+
+```bash
+npm run build
+./sync-btt.js
+```
+
 ## License
 
 This project is licensed under the terms of the MIT license.
