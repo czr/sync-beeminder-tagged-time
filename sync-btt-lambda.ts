@@ -10,7 +10,7 @@ const beeminderUsername = process.env.BEEMINDER_USERNAME
 const beeminderAuthToken = process.env.BEEMINDER_AUTH_TOKEN
 const beeminderGoal = process.env.BEEMINDER_GOAL
 
-const goal = beeminder.goal(
+const goal = new beeminder.Goal(
   beeminderUsername,
   beeminderAuthToken,
   beeminderGoal,
