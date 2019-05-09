@@ -4,12 +4,15 @@
 
 require('dotenv-json')()
 
+const axios = require('axios')
 const beeminder = require('beeminder-js')
-const tt = require('ical-tagged-time')
+const itt = require('ical-tagged-time')
 const minimist = require('minimist')
 const moment = require('moment')
 
 import * as sync from './sync-beeminder-tagged-time'
+
+const googleCalendarUrl = process.env.GOOGLE_CALENDAR_URL
 
 const beeminderUsername = process.env.BEEMINDER_USERNAME
 const beeminderAuthToken = process.env.BEEMINDER_AUTH_TOKEN
@@ -24,17 +27,25 @@ const goal = new beeminder.Goal(
 const opts = minimist(process.argv.slice(2))
 const apply = opts.apply
 
+async function getICalStr (url) {
+  const response = await axios.get(url)
+  return response.data
+}
+
 async function synchronise (apply) {
   const since = moment().subtract(7, 'days').startOf('day')
 
   const tag = beeminderGoal
 
-  const iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
-  const events = tt.taggedEvents(since, iCalStr)[tag] || []
+  const taggedTime = new itt.TaggedTime(
+    getICalStr(googleCalendarUrl),
+    since,
+  )
+  const taggedEvents = await taggedTime.taggedEvents()
 
   const syncer = new sync.BeeminderTimeSync(
     goal,
-    events,
+    taggedEvents[tag] || [],
     since,
   )
   if (apply) {
@@ -46,7 +57,7 @@ async function synchronise (apply) {
 }
 
 synchronise(apply)
-.catch(error => {
-  console.log('Failed to synchronise Beeminder with calendar')
-  console.log(error)
-})
+  .catch(error => {
+    console.log('Failed to synchronise Beeminder with calendar')
+    console.log(error)
+  })
