@@ -27,10 +27,10 @@ interface BeeminderDatapointNew {
 }
 
 interface BeeminderGoal {
-  datapoints(): Promise<Array<BeeminderDatapointExisting>>
-  createDatapoint(datapoint: BeeminderDatapointNew): Promise<string>
-  deleteDatapoint(id: string): Promise<any>
-  updateDatapoint(datapoint: BeeminderDatapointExisting): Promise<any>
+  datapoints (): Promise<Array<BeeminderDatapointExisting>>
+  createDatapoint (datapoint: BeeminderDatapointNew): Promise<string>
+  deleteDatapoint (id: string): Promise<any>
+  updateDatapoint (datapoint: BeeminderDatapointExisting): Promise<any>
 }
 
 class ActionCreate {
@@ -48,7 +48,7 @@ class ActionDelete {
   datapoint: BeeminderDatapointExisting
 }
 
-function cmp(a: any, b: any): number {
+function cmp (a: any, b: any): number {
   if (a < b) {
     return -1
   }
@@ -58,9 +58,9 @@ function cmp(a: any, b: any): number {
   return 0
 }
 
-function eventDuration(event: Event): number {
-  var startTime = moment(event.startDate)
-  var endTime = moment(event.endDate)
+function eventDuration (event: Event): number {
+  const startTime = moment(event.startDate)
+  const endTime = moment(event.endDate)
 
   return moment.duration(endTime.diff(startTime)).asMinutes()
 }
@@ -76,7 +76,7 @@ class BeeminderTimeSync {
    * @param {Array<Event>} events - Array of events.
    * @param {moment.Moment} startDate - MomentJS date from which to synchronise.
    */
-  constructor(goal: BeeminderGoal, events: Array<Event>, startDate: moment.Moment) {
+  constructor (goal: BeeminderGoal, events: Array<Event>, startDate: moment.Moment) {
     this.goal = goal
     this.events = events
     this.startDate = startDate
@@ -86,8 +86,8 @@ class BeeminderTimeSync {
    * Returns the events sorted by their startDate.
    * @return {Array<Event>} Events.
    */
-  sortedEvents(): Array<Event> {
-    var sorted = Array.from(this.events)
+  sortedEvents (): Array<Event> {
+    const sorted = Array.from(this.events)
     sorted.sort((a, b) => cmp(a.startDate, b.startDate))
     return sorted
   }
@@ -97,18 +97,18 @@ class BeeminderTimeSync {
    * sorted by corresponding event date.
    * @return {Promise<Array<BeeminderDatapoint>>} Array of datapoints.
    */
-  async datapoints(): Promise<Array<BeeminderDatapointExisting>> {
-    var allDatapoints: Array<BeeminderDatapointExisting> = await this.goal.datapoints()
-    var since = this.startDate
+  async datapoints (): Promise<Array<BeeminderDatapointExisting>> {
+    const allDatapoints: Array<BeeminderDatapointExisting> = await this.goal.datapoints()
+    const since = this.startDate
 
-    var filtered = allDatapoints.filter(datapoint => {
+    const filtered = allDatapoints.filter(datapoint => {
       return datapoint.comment.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
     }).filter(datapoint => {
-      var m = moment(datapoint.comment)
+      const m = moment(datapoint.comment)
       return m.isSameOrAfter(since)
     })
 
-    var sorted = Array.from(filtered)
+    const sorted = Array.from(filtered)
     sorted.sort((a, b) => cmp(a.comment, b.comment))
 
     return sorted
@@ -118,16 +118,16 @@ class BeeminderTimeSync {
    * Calculates actions needed to bring goal datapoints into line with events.
    * @return {Promise} Actions as {insert: [...], delete: [...], update: [...]}.
    */
-  async actions(): Promise<Array<ActionCreate|ActionUpdate|ActionDelete>> {
-    var events = Array.from(this.sortedEvents())
-    var datapoints = Array.from(await this.datapoints())
+  async actions (): Promise<Array<ActionCreate | ActionUpdate | ActionDelete>> {
+    const events = Array.from(this.sortedEvents())
+    const datapoints = Array.from(await this.datapoints())
 
-    var actions = []
+    const actions = []
 
-    var currEvent = events.shift()
-    var currDatapoint = datapoints.shift()
+    let currEvent = events.shift()
+    let currDatapoint = datapoints.shift()
 
-    var counter = 0
+    let counter = 0
     while (currEvent && currDatapoint) {
       if (currEvent.startDate.toISOString() === currDatapoint.comment) {
         if (eventDuration(currEvent) !== currDatapoint.value) {
@@ -139,12 +139,10 @@ class BeeminderTimeSync {
         }
         currEvent = events.shift()
         currDatapoint = datapoints.shift()
-      }
-      else if (currEvent.startDate.toISOString() > currDatapoint.comment) {
+      } else if (currEvent.startDate.toISOString() > currDatapoint.comment) {
         actions.push({ type: 'delete', datapoint: currDatapoint })
         currDatapoint = datapoints.shift()
-      }
-      else if (currEvent.startDate.toISOString() < currDatapoint.comment) {
+      } else if (currEvent.startDate.toISOString() < currDatapoint.comment) {
         actions.push({ type: 'create', datapoint: {
           comment: currEvent.startDate.toISOString(),
           value: eventDuration(currEvent),
@@ -175,11 +173,11 @@ class BeeminderTimeSync {
    * Brings goal datapoints into line with events.
    * @return {Promise<void>} Container promise for all Beeminder API calls.
    */
-  async apply(): Promise<any> {
-    var actions = await this.actions()
-    var goal = this.goal
+  async apply (): Promise<any> {
+    const actions = await this.actions()
+    const goal = this.goal
 
-    var promises = []
+    const promises = []
 
     for (let action of actions) {
       if (action.type === 'create') {
@@ -190,7 +188,7 @@ class BeeminderTimeSync {
             })
             .catch((error) => {
               console.log('Failed to create datapoint: ' + error)
-            })
+            }),
         )
       }
 
@@ -202,7 +200,7 @@ class BeeminderTimeSync {
             })
             .catch((error) => {
               console.log('Failed to update datapoint: ' + error)
-            })
+            }),
         )
       }
 
@@ -214,7 +212,7 @@ class BeeminderTimeSync {
             })
             .catch((error) => {
               console.log('Failed to delete datapoint: ' + error)
-            })
+            }),
         )
       }
     }

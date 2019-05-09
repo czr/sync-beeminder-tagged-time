@@ -6,23 +6,23 @@ const moment = require('moment')
 
 import * as sync from './sync-beeminder-tagged-time'
 
-var beeminder_username = process.env.BEEMINDER_USERNAME
-var beeminder_auth_token = process.env.BEEMINDER_AUTH_TOKEN
-var beeminder_goal = process.env.BEEMINDER_GOAL
+const beeminderUsername = process.env.BEEMINDER_USERNAME
+const beeminderAuthToken = process.env.BEEMINDER_AUTH_TOKEN
+const beeminderGoal = process.env.BEEMINDER_GOAL
 
-var goal = beeminder.goal(
-  beeminder_username,
-  beeminder_auth_token,
-  beeminder_goal,
+const goal = beeminder.goal(
+  beeminderUsername,
+  beeminderAuthToken,
+  beeminderGoal,
 )
 
-async function handler(event) {
-  var since = moment().subtract(7, 'days').startOf('day')
+async function handler (event) {
+  const since = moment().subtract(7, 'days').startOf('day')
 
-  var tag = beeminder_goal
+  const tag = beeminderGoal
 
-  var iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
-  var events = tt.taggedEvents(since, iCalStr)[tag] || []
+  const iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
+  const events = tt.taggedEvents(since, iCalStr)[tag] || []
 
   const syncer = new sync.BeeminderTimeSync(
     goal,
@@ -32,4 +32,4 @@ async function handler(event) {
   await syncer.apply()
 }
 
-module.exports = { handler };
+module.exports = { handler }

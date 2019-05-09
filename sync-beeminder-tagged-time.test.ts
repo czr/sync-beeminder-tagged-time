@@ -4,11 +4,11 @@ const moment = require('moment')
 
 const sync = require('./sync-beeminder-tagged-time')
 
-function createOkPromise(data) {
+function createOkPromise (data) {
   return new Promise((ok, err) => { ok(data) })
 }
 
-function mockGoal(datapoints) {
+function mockGoal (datapoints) {
   let okPromise = createOkPromise({})
   let datapointsPromise = createOkPromise(datapoints)
   return {
@@ -20,12 +20,52 @@ function mockGoal(datapoints) {
 }
 
 test('sorted, filtered datapoints', async () => {
-  var datapoints = [
-    {"id":"1", "timestamp":1234567890, "daystamp":"20190223", "value":6, "comment":"2019-02-23T01:00:00.000Z", "updated_at":123, "requestid":"a"},
-    {"id":"2", "timestamp":1234567890, "daystamp":"20190221", "value":7, "comment":"2019-02-21T01:00:00.000Z", "updated_at":123, "requestid":"b"},
-    {"id":"3", "timestamp":1234567891, "daystamp":"20190222", "value":8, "comment":"2019-02-22T01:00:00.000Z", "updated_at":123, "requestid":"c"},
-    {"id":"4", "timestamp":1234567891, "daystamp":"20190222", "value":9, "comment":"", "updated_at":123, "requestid":"d"},
-    {"id":"5", "timestamp":1234567890, "daystamp":"20190220", "value":0, "comment":"2019-02-20T01:00:00.000Z", "updated_at":123, "requestid":"e"},
+  const datapoints = [
+    {
+      'id': '1',
+      'timestamp': 1234567890,
+      'daystamp': '20190223',
+      'value': 6,
+      'comment': '2019-02-23T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'a',
+    },
+    {
+      'id': '2',
+      'timestamp': 1234567890,
+      'daystamp': '20190221',
+      'value': 7,
+      'comment': '2019-02-21T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'b',
+    },
+    {
+      'id': '3',
+      'timestamp': 1234567891,
+      'daystamp': '20190222',
+      'value': 8,
+      'comment': '2019-02-22T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'c',
+    },
+    {
+      'id': '4',
+      'timestamp': 1234567891,
+      'daystamp': '20190222',
+      'value': 9,
+      'comment': '',
+      'updated_at': 123,
+      'requestid': 'd',
+    },
+    {
+      'id': '5',
+      'timestamp': 1234567890,
+      'daystamp': '20190220',
+      'value': 0,
+      'comment': '2019-02-20T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'e',
+    },
   ]
 
   const syncer = new sync.BeeminderTimeSync(
@@ -37,14 +77,38 @@ test('sorted, filtered datapoints', async () => {
   const result = await syncer.datapoints()
 
   expect(result).toMatchObject([
-    {"id":"2", "timestamp":1234567890, "daystamp":"20190221", "value":7, "comment":"2019-02-21T01:00:00.000Z", "updated_at":123, "requestid":"b"},
-    {"id":"3", "timestamp":1234567891, "daystamp":"20190222", "value":8, "comment":"2019-02-22T01:00:00.000Z", "updated_at":123, "requestid":"c"},
-    {"id":"1", "timestamp":1234567890, "daystamp":"20190223", "value":6, "comment":"2019-02-23T01:00:00.000Z", "updated_at":123, "requestid":"a"},
+    {
+      'id': '2',
+      'timestamp': 1234567890,
+      'daystamp': '20190221',
+      'value': 7,
+      'comment': '2019-02-21T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'b',
+    },
+    {
+      'id': '3',
+      'timestamp': 1234567891,
+      'daystamp': '20190222',
+      'value': 8,
+      'comment': '2019-02-22T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'c',
+    },
+    {
+      'id': '1',
+      'timestamp': 1234567890,
+      'daystamp': '20190223',
+      'value': 6,
+      'comment': '2019-02-23T01:00:00.000Z',
+      'updated_at': 123,
+      'requestid': 'a',
+    },
   ])
 })
 
 test('sorted events', () => {
-  var events = [
+  const events = [
     {
       startDate: new Date('2019-02-21T01:00:00'),
       endDate: new Date('2019-02-21T02:00:00'),
@@ -67,7 +131,7 @@ test('sorted events', () => {
     events,
     moment('2019-01-01'),
   )
-  var sorted = syncer.sortedEvents()
+  const sorted = syncer.sortedEvents()
 
   expect(sorted).toMatchObject([
     {
@@ -90,7 +154,7 @@ test('sorted events', () => {
 
 describe('calculate sync actions', () => {
   test('no data', async () => {
-    var events = []
+    const events = []
 
     const syncer = new sync.BeeminderTimeSync(
       mockGoal([]),
@@ -98,18 +162,18 @@ describe('calculate sync actions', () => {
       moment('2019-01-01'),
     )
 
-    var actions = await syncer.actions()
+    const actions = await syncer.actions()
 
     expect(actions).toEqual([])
   })
 
   test('one event', async () => {
-    var events = [
+    const events = [
       {
         startDate: new Date('2019-02-21T01:00:00'),
         endDate: new Date('2019-02-21T02:00:00'),
         summary: 'One #music',
-      }
+      },
     ]
     const syncer = new sync.BeeminderTimeSync(
       mockGoal([]),
@@ -117,7 +181,7 @@ describe('calculate sync actions', () => {
       moment('2019-01-01'),
     )
 
-    var actions = await syncer.actions()
+    const actions = await syncer.actions()
 
     expect(actions).toEqual([
       {
@@ -132,8 +196,8 @@ describe('calculate sync actions', () => {
   })
 
   test('one datapoint', async () => {
-    var events = []
-    var datapoints = [
+    const events = []
+    const datapoints = [
       {
         id: 101,
         comment: '2019-02-21T01:00:00.000Z',
@@ -147,7 +211,7 @@ describe('calculate sync actions', () => {
       moment('2019-01-01'),
     )
 
-    var actions = await syncer.actions()
+    const actions = await syncer.actions()
 
     expect(actions).toEqual([
       {
@@ -162,14 +226,14 @@ describe('calculate sync actions', () => {
   })
 
   test('update', async () => {
-    var events = [
+    const events = [
       {
         startDate: new Date('2019-02-21T01:00:00'),
         endDate: new Date('2019-02-21T02:00:00'),
         summary: 'One #music',
-      }
+      },
     ]
-    var datapoints = [
+    const datapoints = [
       {
         id: 101,
         comment: '2019-02-21T01:00:00.000Z',
@@ -183,7 +247,7 @@ describe('calculate sync actions', () => {
       moment('2019-01-01'),
     )
 
-    var actions = await syncer.actions()
+    const actions = await syncer.actions()
 
     expect(actions).toEqual([
       {
@@ -200,8 +264,8 @@ describe('calculate sync actions', () => {
 
 describe('apply', () => {
   test('no actions', async () => {
-    var goal = mockGoal([])
-    var actions = []
+    const goal = mockGoal([])
+    const actions = []
 
     const syncer = new sync.BeeminderTimeSync(
       goal,
@@ -219,8 +283,8 @@ describe('apply', () => {
   })
 
   test('insert', async () => {
-    var goal = mockGoal([])
-    var actions = [
+    const goal = mockGoal([])
+    const actions = [
       {
         type: 'create',
         datapoint: {
@@ -244,15 +308,15 @@ describe('apply', () => {
       {
         comment: '2019-02-21T01:00:00.000Z',
         value: 60,
-      }
+      },
     )
     expect(goal.deleteDatapoint).not.toHaveBeenCalled()
     expect(goal.updateDatapoint).not.toHaveBeenCalled()
   })
 
   test('update', async () => {
-    var goal = mockGoal([])
-    var actions = [
+    const goal = mockGoal([])
+    const actions = [
       {
         type: 'update',
         datapoint: {
@@ -279,21 +343,21 @@ describe('apply', () => {
         id: 101,
         comment: '2019-02-21T01:00:00.000Z',
         value: 60,
-      }
+      },
     )
     expect(goal.deleteDatapoint).not.toHaveBeenCalled()
   })
 
   test('insert', async () => {
-    var goal = mockGoal([])
-    var actions = [
+    const goal = mockGoal([])
+    const actions = [
       {
         type: 'delete',
         datapoint: {
           id: 101,
           comment: 'dummy',
         },
-      }
+      },
     ]
 
     const syncer = new sync.BeeminderTimeSync(

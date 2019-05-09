@@ -2,7 +2,7 @@
 
 'use strict'
 
-require("dotenv-json")()
+require('dotenv-json')()
 
 const beeminder = require('beeminder-js')
 const tt = require('ical-tagged-time')
@@ -11,26 +11,26 @@ const moment = require('moment')
 
 import * as sync from './sync-beeminder-tagged-time'
 
-var beeminder_username = process.env.BEEMINDER_USERNAME
-var beeminder_auth_token = process.env.BEEMINDER_AUTH_TOKEN
-var beeminder_goal = process.env.BEEMINDER_GOAL
+const beeminderUsername = process.env.BEEMINDER_USERNAME
+const beeminderAuthToken = process.env.BEEMINDER_AUTH_TOKEN
+const beeminderGoal = process.env.BEEMINDER_GOAL
 
-var goal = beeminder.goal(
-  beeminder_username,
-  beeminder_auth_token,
-  beeminder_goal,
+const goal = beeminder.goal(
+  beeminderUsername,
+  beeminderAuthToken,
+  beeminderGoal,
 )
 
-var opts = minimist(process.argv.slice(2))
-var apply = opts.apply
+const opts = minimist(process.argv.slice(2))
+const apply = opts.apply
 
-async function synchronise(apply) {
-  var since = moment().subtract(7, 'days').startOf('day')
+async function synchronise (apply) {
+  const since = moment().subtract(7, 'days').startOf('day')
 
-  var tag = beeminder_goal
+  const tag = beeminderGoal
 
-  var iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
-  var events = tt.taggedEvents(since, iCalStr)[tag] || []
+  const iCalStr = await tt.getICalStr(process.env.GOOGLE_CALENDAR_URL)
+  const events = tt.taggedEvents(since, iCalStr)[tag] || []
 
   const syncer = new sync.BeeminderTimeSync(
     goal,
@@ -39,8 +39,7 @@ async function synchronise(apply) {
   )
   if (apply) {
     await syncer.apply()
-  }
-  else {
+  } else {
     const actions = await syncer.actions()
     console.log(actions)
   }
