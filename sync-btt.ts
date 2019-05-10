@@ -2,15 +2,16 @@
 
 'use strict'
 
-require('dotenv-json')()
-
-const axios = require('axios')
-const beeminder = require('beeminder-js')
-const itt = require('ical-tagged-time')
-const minimist = require('minimist')
-const moment = require('moment')
+import axios from 'axios'
+import beeminder from 'beeminder-js'
+import dotenvJson from 'dotenv-json'
+import itt from 'ical-tagged-time'
+import minimist from 'minimist'
+import moment from 'moment'
 
 import * as sync from './sync-beeminder-tagged-time'
+
+dotenvJson()
 
 const googleCalendarUrl = process.env.GOOGLE_CALENDAR_URL
 

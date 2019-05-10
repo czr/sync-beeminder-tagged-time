@@ -1,9 +1,9 @@
 'use strict'
 
-const axios = require('axios')
-const beeminder = require('beeminder-js')
-const itt = require('ical-tagged-time')
-const moment = require('moment')
+import axios from 'axios'
+import beeminder from 'beeminder-js'
+import itt from 'ical-tagged-time'
+import moment from 'moment'
 
 import * as sync from './sync-beeminder-tagged-time'
 
