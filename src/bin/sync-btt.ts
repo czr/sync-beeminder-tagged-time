@@ -9,7 +9,7 @@ import itt from 'ical-tagged-time'
 import minimist from 'minimist'
 import moment from 'moment'
 
-import * as sync from './sync-beeminder-tagged-time'
+import * as sync from '../lib/sync-beeminder-tagged-time'
 
 dotenvJson()
 

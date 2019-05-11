@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Updates a Beeminder goal with hashtagged calendar entries",
   "scripts": {
-    "build": "tsc && chmod +x sync-btt.js",
+    "build": "tsc && chmod +x bin/sync-btt.js",
     "test": "npm run build && jest",
     "posttest": "tslint --project tsconfig.json",
     "redeploy": "npm run build && claudia --profile claudia update",
@@ -37,5 +37,8 @@
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.4.3"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/src/"]
   }
 }

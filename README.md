@@ -27,7 +27,7 @@ And then run:
 ```bash
 npm run build && claudia --profile claudia create \
   --region eu-west-1 \
-  --handler sync-btt-lambda.handler \
+  --handler lib/sync-btt-lambda.handler \
   --name sync-beeminder-time-tracking \
   --role sync-beeminder-time-tracking-role \
   --runtime nodejs8.10 --timeout 60 \
