@@ -48,6 +48,8 @@ class ActionDelete {
   datapoint: BeeminderDatapointExisting
 }
 
+type Action = ActionCreate | ActionUpdate | ActionDelete
+
 function cmp (a: any, b: any): number {
   if (a < b) {
     return -1
@@ -118,7 +120,7 @@ class BeeminderTimeSync {
    * Calculates actions needed to bring goal datapoints into line with events.
    * @return {Promise} Actions as {insert: [...], delete: [...], update: [...]}.
    */
-  async actions (): Promise<Array<ActionCreate | ActionUpdate | ActionDelete>> {
+  async actions (): Promise<Array<Action>> {
     const events = Array.from(this.sortedEvents())
     const datapoints = Array.from(await this.datapoints())
 
@@ -221,4 +223,10 @@ class BeeminderTimeSync {
   }
 }
 
-export { BeeminderTimeSync }
+export {
+  Action,
+  ActionCreate,
+  ActionDelete,
+  ActionUpdate,
+  BeeminderTimeSync,
+}

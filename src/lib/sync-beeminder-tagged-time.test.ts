@@ -1,9 +1,11 @@
 'use strict'
 
-const moment = require('moment')
+import moment from 'moment'
 
-const sync = require('./sync-beeminder-tagged-time')
+import * as sync from './sync-beeminder-tagged-time'
 
+function createOkPromise (data: Array<sync.Action>): Promise<Array<sync.Action>>
+function createOkPromise (data: any): Promise<any>
 function createOkPromise (data) {
   return new Promise((ok, err) => { ok(data) })
 }
