@@ -19,6 +19,10 @@
     "url": "https://github.com/czr/sync-beeminder-tagged-time/issues"
   },
   "homepage": "https://github.com/czr/sync-beeminder-tagged-time#readme",
+  "files": [
+    "/bin",
+    "/lib"
+  ],
   "dependencies": {
     "axios": "^0.18.0",
     "beeminder-js": "git+https://github.com/czr/beeminder-js.git",
