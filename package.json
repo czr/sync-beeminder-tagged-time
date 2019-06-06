@@ -43,6 +43,9 @@
     "typescript": "^3.4.3"
   },
   "jest": {
-    "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/src/"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/src/"
+    ]
   }
 }
