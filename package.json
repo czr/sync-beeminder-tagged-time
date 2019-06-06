@@ -36,7 +36,7 @@
     "@types/node": "^11.13.4",
     "claudia": "^5.4.0",
     "dotenv-json": "^1.0.0",
-    "jest": "^24.1.0",
+    "jest": "^24.8.0",
     "jsdoc": "^3.5.5",
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
