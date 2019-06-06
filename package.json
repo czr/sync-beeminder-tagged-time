@@ -24,7 +24,7 @@
     "/lib"
   ],
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "beeminder-js": "git+https://github.com/czr/beeminder-js.git",
     "ical-tagged-time": "git+https://github.com/czr/ical-tagged-time.git",
     "minimist": "^1.2.0",
