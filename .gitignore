@@ -68,5 +68,5 @@ typings/
 jsdoc-out
 
 # Deployment
-.env.json
-claudia.json
+*.env.json
+*.claudia.json

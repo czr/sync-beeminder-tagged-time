@@ -9,7 +9,7 @@ Given a Beeminder goal counting minutes spent on a task, sync-beeminder-tagged-t
 ### Initial deployment
 
 
-The initial deployment needs an `.env.json` that looks like this:
+The initial deployment needs an `goalname.env.json` that looks like this:
 
 ```json
 {
@@ -25,13 +25,14 @@ The `GOOGLE_CALENDAR_URL` is the secret iCal link that you can get from your Goo
 And then run:
 
 ```bash
-npm run build && claudia --profile claudia create \
+npm run build && ./node_modules/.bin/claudia --profile claudia create \
   --region eu-west-1 \
   --handler lib/sync-btt-lambda.handler \
-  --name sync-beeminder-time-tracking \
+  --name sync-beeminder-time-tracking-goalname \
   --role sync-beeminder-time-tracking-role \
-  --runtime nodejs8.10 --timeout 60 \
-  --set-env-from-json .env.json
+  --runtime nodejs12.x --timeout 60 \
+  --set-env-from-json goalname.env.json \
+  --config goalname.claudia.json
 ```
 
 The `role` and `name` can be named however you like. You'll also want to adjust the `region` appropriately.
@@ -39,7 +40,7 @@ The `role` and `name` can be named however you like. You'll also want to adjust 
 ### Redeploying after changes
 
 ```bash
-npm run redeploy
+npm run redeploy -- --config goalname.claudia.json
 ```
 
 ## Running locally
