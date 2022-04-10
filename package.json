@@ -27,7 +27,7 @@
     "axios": "^0.18.1",
     "beeminder-js": "git+https://github.com/czr/beeminder-js.git",
     "ical-tagged-time": "git+https://github.com/czr/ical-tagged-time.git",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "moment": "^2.24.0",
     "qs": "^6.6.0"
   },
