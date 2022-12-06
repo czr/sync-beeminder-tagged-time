@@ -29,7 +29,7 @@
     "ical-tagged-time": "git+https://github.com/czr/ical-tagged-time.git",
     "minimist": "^1.2.0",
     "moment": "^2.24.0",
-    "qs": "^6.6.0"
+    "qs": "^6.6.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
